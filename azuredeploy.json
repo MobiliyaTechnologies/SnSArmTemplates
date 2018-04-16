@@ -198,10 +198,20 @@
       "metadata": {
         "description": "Enter report Id of published Power BI report"
       }
-    }
-
+    },
 
     //Power BI Parameters End
+
+    //Video Indexer Parameters Start
+
+    "videoIndexerKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter Video Indexer service key"
+      }
+    }
+
+    //Video Indexer Parameters End
   },
   "variables": {
     //IoT Hub Variables Start
@@ -219,11 +229,11 @@
     //Face API Variables End
 
     //Storage Variables Start
-    "DeployStorageAccountName": "armsynnex",
+    "DeployStorageAccountName": "snsarm",
     "DeployStorageAccountKey": "",
-    "WebAppDeployPackageURI": "<Placeholder for Web App deploy package Blob URL>",
-    "ComputeEngineDeployPackageURI": "<Placeholder for Cloud Compute Engine deploy package Blob URL>",
-    "ServerBackendDeployPackageURI": "<Placeholder for Server Backend deploy package Blob URL>",
+    "WebAppDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/SnsWebApp.zip",
+    "ComputeEngineDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/CloudComputeEngine.zip",
+    "ServerBackendDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/SnsBackend.zip",
     "SasToken": "?",
 
     //Storage Variables End
@@ -247,9 +257,9 @@
     "ComputeEnginePackageURI": "[concat(variables('ComputeEngineDeployPackageURI'), variables('SasToken'))]",
     "ServerBackendPackageURI": "[concat(variables('ServerBackendDeployPackageURI'), variables('SasToken'))]",
     "BlobconnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('DeployStorageAccountName'),';AccountKey=',variables('DeployStorageAccountKey'))]",
-    "websiteFullAddress": "[concat('https://',parameters('webSiteName'),'.azurewebsites.net/')]",
-    "serverBackendFullAddress": "[concat('https://',parameters('serverBackendName'),'.azurewebsites.net/')]",
-    "computeEngineFullAddress": "[concat('https://',parameters('computeEngineName'),'.azurewebsites.net/')]",
+    "websiteFullAddress": "[concat('https://',parameters('webSiteName'),'.azurewebsites.net')]",
+    "serverBackendFullAddress": "[concat('https://',parameters('serverBackendName'),'.azurewebsites.net')]",
+    "computeEngineFullAddress": "[concat('https://',parameters('computeEngineName'),'.azurewebsites.net')]",
     "ADEndpoint": "https://login.windows.net/",
     "WindowsManagementUri": "https://management.core.windows.net/"
 
@@ -732,9 +742,26 @@
     "ComputeEngineUri": {
       "type": "string",
       "value": "[reference(concat('Microsoft.Web/sites/', parameters('computeEngineName'))).hostnames[0]]"
-    }
-
+    },
 
     //Web App Output End
+
+    //IoT hub Output Start
+
+    "IoTHubConnectionString": {
+      "type": "string",
+      "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]"
+    },
+
+    //IoT hub Output End
+
+    //Video Indexer Output Start
+
+    "VideoIndexerKey": {
+      "type": "string",
+      "value": "[parameters('videoIndexerKey')]"
+    }
+
+    //Video Indexer Output End
   }
 }
