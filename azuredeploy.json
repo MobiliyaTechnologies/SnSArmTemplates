@@ -231,9 +231,9 @@
     //Storage Variables Start
     "DeployStorageAccountName": "snsarm",
     "DeployStorageAccountKey": "",
-    "WebAppDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/SnsWebApp.zip",
-    "ComputeEngineDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/CloudComputeEngine.zip",
-    "ServerBackendDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/SnsBackend.zip",
+    "WebAppDeployPackageURI": "<Placeholder for Web App deployment package blob URL>",
+    "ComputeEngineDeployPackageURI": "<Placeholder for Compute Engine deployment package blob URL>",
+    "ServerBackendDeployPackageURI": "<Placeholder for REST API App deployment package blob URL>",
     "SasToken": "?",
 
     //Storage Variables End
@@ -533,7 +533,7 @@
               "type": "Custom"
             },
             "cloudServiceUrl": {
-              "value": "[concat(variables('computeEngineFullAddress'),'/faces/recognize')]",
+              "value": "[concat(variables('computeEngineFullAddress'),'/')]",
               "type": "Custom"
             },
             "faceApiSubscriptionKey": {
@@ -541,7 +541,7 @@
               "type": "Custom"
             },
             "faceApiBaseUrl": {
-              "value": "[reference(parameters('faceApiName'),'2016-02-01-preview').endpoint]",
+              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint, '/')]",
               "type": "Custom"
             }
 
@@ -695,7 +695,7 @@
               "type": "Custom"
             },
             "faceApiBaseUrl": {
-              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint,'/facelists/0/persistedFaces')]",
+              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint,'/face/v1.0/')]",
               "type": "Custom"
             },
             "videoIndexSubscriptionKey": {
