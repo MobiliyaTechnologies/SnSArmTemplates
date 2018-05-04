@@ -214,6 +214,14 @@
     //Video Indexer Parameters End
   },
   "variables": {
+    //Storage Account Variables Start
+
+    "strAccntName": "[concat('snsstrg',uniqueString(resourceGroup().id))]",
+    "strAccntType": "Standard_LRS",
+
+    //Storage Account Variables End
+
+
     //IoT Hub Variables Start
 
     "iotHubName": "[concat(parameters('iotHubNamePrefix'),uniqueString(resourceGroup().id))]",
@@ -266,6 +274,25 @@
     //Web App Variables End
   },
   "resources": [
+
+    //Storage Account Resources Start
+
+    {
+      "name": "[variables('strAccntName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[variables('strAccntType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "webjobStorage"
+      },
+      "kind": "Storage"
+    },
+
+    //Storage Account Resources End
 
     //IoT Hub Resources Start
 
@@ -542,6 +569,18 @@
             },
             "faceApiBaseUrl": {
               "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "blobUri": {
+              "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net/')]",
+              "type": "Custom"
+            },
+            "blobStorageAccessKey": {
+              "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccntName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+              "type": "Custom"
+            },
+            "blobStorageAccountName": {
+              "value": "[variables('strAccntName')]",
               "type": "Custom"
             }
 
