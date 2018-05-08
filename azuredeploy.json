@@ -1,0 +1,798 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    //IoT Hub Parameters Start
+
+    "iotHubNamePrefix": {
+      "type": "string",
+      "minLength": 3,
+      "metadata": {
+        "description": "Name of the IoT Hub instance to provision."
+      }
+    },
+    "iotHubPricingTier": {
+      "type": "string",
+      "allowedValues": [
+        "F1",
+        "S1",
+        "S2"
+      ],
+      "defaultValue": "S1",
+      "metadata": {
+        "description": "Pricing tier for IoT Hub"
+      }
+    },
+    "capacityUnits": {
+      "type": "int",
+      "minValue": 1,
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Number of desired IoT Hub units. Restricted to 1 unit for F1. Can be set up to maximum number allowed for subscription."
+      }
+    },
+
+    //IoT Parameters End
+
+    //Face API Parameters Start
+
+    "faceApiName": {
+      "type": "string"
+    },
+    "faceApiLocation": {
+      "type": "string",
+      "defaultValue": "",
+      "allowedValues": [
+        "eastus",
+        "eastus2",
+        "westus",
+        "westus2",
+        "southcentralus",
+        "westcentralus",
+        "northeurope",
+        "westeurope"
+      ]
+    },
+    "faceApiPricingTier": {
+      "type": "string",
+      "defaultValue": "S0",
+      "allowedValues": [
+        "S0",
+        "F0"
+      ]
+    },
+
+    //Face API Parameters End
+
+    //Document DB Parameters Start
+    "docDBNamePrefix": {
+      "type": "string",
+      "maxLength": 17,
+      "metadata": {
+        "description": "Prefix for DocumentDB database account name which should be unique."
+      }
+    },
+
+    //Document DB Parameters End
+
+    //Web App Parameters Start
+
+    "appServicePlanPricingTier": {
+      "type": "string",
+      "defaultValue": "S1",
+      "allowedValues": [
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "appServicePlanInstanceCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Describes plan's instance count"
+      }
+    },
+    "hostingPlanName": {
+      "type": "string",
+      "defaultValue": "AppServPlan",
+      "metadata": {
+        "description": "Describes Hosting plan's name"
+      }
+    },
+    "webSiteName": {
+      "type": "string",
+      "metadata": {
+        "description": "Describes Web Site name which should be unique"
+      }
+    },
+    "computeEngineName": {
+      "type": "string",
+      "metadata": {
+        "description": "Describes the compute engine name which should be unique"
+      }
+    },
+    "serverBackendName": {
+      "type": "string",
+      "metadata": {
+        "description": "Describes API Server Backend name which should be unique"
+      }
+    },
+
+    //Web App Parameters End
+
+    //B2C Parameters Start
+
+    "b2cClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter App Client ID registrered under B2C tenant"
+      }
+    },
+    "b2cPolicy": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter B2C SignUp-SignIn policy"
+      }
+    },
+    "b2cTenant": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter B2C tenant name ex. something.onmicrosoft.com"
+      }
+    },
+    "b2cUserImpersonationScope": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter User impersonation scope of B2C tenant"
+      }
+    },
+
+    //B2C Parameters End
+
+    //Power BI Parameters Start
+
+    //"pbiUsername": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter PowerBI account username"
+    //  }
+    //},
+    //"pbiPassword": {
+    //  "type": "securestring",
+    //  "metadata": {
+    //    "description": "Enter PowerBI account password"
+    //  }
+    //},
+    //"pbiClientId": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter Client Id of App registered with PowerBI"
+    //  }
+    //},
+    //"pbiClientSecret": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter Client Secret of App registered with PowerBI"
+    //  }
+    //},
+    //"pbiEmbedUrl": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter PowerBI report URL to be embeded"
+    //  }
+    //},
+    //"pbiReportId": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter report Id of published Power BI report"
+    //  }
+    //},
+
+    //Power BI Parameters End
+
+    //Video Indexer Parameters Start
+
+    "videoIndexerKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter Video Indexer service key"
+      }
+    }
+
+    //Video Indexer Parameters End
+  },
+  "variables": {
+    //Storage Account Variables Start
+
+    "strAccntName": "[concat('snsstrg',uniqueString(resourceGroup().id))]",
+    "strAccntType": "Standard_LRS",
+
+    //Storage Account Variables End
+
+
+    //IoT Hub Variables Start
+
+    "iotHubName": "[concat(parameters('iotHubNamePrefix'),uniqueString(resourceGroup().id))]",
+    "iotHubKeyName": "iothubowner",
+    "iotHubHostName": "[concat(variables('iotHubName'),'.azure-devices.net')]",
+
+    //IoT Hub Variables End
+
+    //Face API Variables Start
+
+
+
+    //Face API Variables End
+
+    //Storage Variables Start
+    "DeployStorageAccountName": "snsarm",
+    "DeployStorageAccountKey": "",
+    "WebAppDeployPackageURI": "<Placeholder for Web App deployment package blob URL>",
+    "ComputeEngineDeployPackageURI": "<Placeholder for Compute Engine deployment package blob URL>",
+    "ServerBackendDeployPackageURI": "<Placeholder for REST API App deployment package blob URL>",
+    "SasToken": "?",
+
+    //Storage Variables End
+
+    //Database Variables Start
+
+    //Document DB Variables Start
+
+    "DocDBAccountName": "[concat(toLower(parameters('docDBNamePrefix')),uniqueString('resourceGroup().id'))]",
+    "offerType": "Standard",
+    //"DocDBName": "AssetTrackingDB",
+    //"DocDBGroupGpsCollection": "GroupGpsData",
+    //"DocDBSensorCollection": "SensorData",
+    "DocDBOfferThroughput": "400",
+
+    //Document DB Variables End
+
+    //Web App Variables Start
+
+    "WebAppPackageURI": "[concat(variables('WebAppDeployPackageURI'), variables('SasToken'))]",
+    "ComputeEnginePackageURI": "[concat(variables('ComputeEngineDeployPackageURI'), variables('SasToken'))]",
+    "ServerBackendPackageURI": "[concat(variables('ServerBackendDeployPackageURI'), variables('SasToken'))]",
+    "BlobconnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('DeployStorageAccountName'),';AccountKey=',variables('DeployStorageAccountKey'))]",
+    "websiteFullAddress": "[concat('https://',parameters('webSiteName'),'.azurewebsites.net')]",
+    "serverBackendFullAddress": "[concat('https://',parameters('serverBackendName'),'.azurewebsites.net')]",
+    "computeEngineFullAddress": "[concat('https://',parameters('computeEngineName'),'.azurewebsites.net')]",
+    "ADEndpoint": "https://login.windows.net/",
+    "WindowsManagementUri": "https://management.core.windows.net/"
+
+    //Web App Variables End
+  },
+  "resources": [
+
+    //Storage Account Resources Start
+
+    {
+      "name": "[variables('strAccntName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[variables('strAccntType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "webjobStorage"
+      },
+      "kind": "Storage"
+    },
+
+    //Storage Account Resources End
+
+    //IoT Hub Resources Start
+
+    {
+      "apiVersion": "2016-02-03",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('iotHubName')]",
+      "properties": {
+        "eventHubEndpoints": {
+          "events": {
+            "retentionTimeInDays": 1,
+            "partitionCount": 2
+          }
+        },
+        "cloudToDevice": {
+          "defaultTtlAsIso8601": "PT1H",
+          "maxDeliveryCount": 10,
+          "feedback": {
+            "maxDeliveryCount": 10,
+            "ttlAsIso8601": "PT1H",
+            "lockDurationAsIso8601": "PT60S"
+          }
+        },
+        "location": "[resourceGroup().location]"
+      },
+      "sku": {
+        "name": "[parameters('iotHubPricingTier')]",
+        "capacity": "[parameters('capacityUnits')]"
+      },
+      "type": "Microsoft.Devices/IotHubs"
+    },
+
+    //IoT Hub Resources End
+
+    //Face API Resources Start
+
+    {
+      "apiVersion": "2016-02-01-preview",
+      "name": "[parameters('faceApiName')]",
+      "location": "[parameters('faceApiLocation')]",
+      "type": "Microsoft.CognitiveServices/accounts",
+      "kind": "Face",
+      "sku": {
+        "name": "[parameters('faceApiPricingTier')]"
+      },
+      "properties": {}
+    },
+
+    //Face API Resources End
+
+    //Database Resources Start
+
+    //Document DB Start
+
+    {
+      "apiVersion": "2015-04-08",
+      "kind": "MongoDB",
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "name": "[variables('DocDBAccountName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('DocDBAccountName')]",
+        "databaseAccountOfferType": "[variables('offerType')]",
+        "locations": [
+          {
+            "locationName": "[resourceGroup().location]",
+            "failoverPriority": 0,
+            "id": "[concat(variables('DocDBAccountName'), '-', resourceGroup().location)]"
+          }
+        ]
+      },
+      "tags": {
+        "defaultExperience": "MongoDB"
+      }
+    },
+
+    //Document DB End
+
+    //Web App Resources Start
+
+    {
+      "apiVersion": "2016-03-01",
+      "name": "[parameters('hostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "HostingPlan"
+      },
+      "sku": {
+        "name": "[parameters('appServicePlanPricingTier')]",
+        "capacity": "[parameters('appServicePlanInstanceCount')]"
+      },
+      "properties": {
+        "name": "[parameters('hostingPlanName')]"
+      }
+    },
+    {
+      "apiVersion": "2016-03-01",
+      "name": "[parameters('webSiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[parameters('hostingPlanName')]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName')))]": "empty",
+        "displayName": "Website"
+      },
+      "properties": {
+        "name": "[parameters('webSiteName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "config",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('webSiteName'))]",
+            "[concat('Microsoft.Web/sites/', parameters('webSiteName'), '/extensions/MSDeploy')]"
+          ],
+          "tags": {
+            "displayName": "WebAppConfig"
+          },
+          "properties": {
+            "phpVersion": "5.6",
+            "netFrameworkVersion": "v4.6",
+            "use32BitWorkerProcess": false,
+            "webSocketsEnabled": true,
+            "alwaysOn": true,
+            "remoteDebuggingEnabled": true,
+            "remoteDebuggingVersion": "VS2015"
+          }
+        },
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('webSiteName'))]"
+          ],
+          "tags": {
+            "displayName": "WebAppMSDeploy"
+          },
+          "properties": {
+            "packageUri": "[variables('WebAppPackageURI')]"
+          }
+        },
+        {
+          "name": "connectionstrings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('webSiteName'))]",
+            "[concat('Microsoft.Web/sites/', parameters('webSiteName'), '/extensions/MSDeploy')]"
+          ],
+          "tags": {
+            "displayName": "WebAppConnectionStrings"
+          },
+          "properties": {
+            "BlobConnection": {
+              "value": "[variables('BlobconnectionString')]",
+              "type": "Custom"
+            },
+            "backendHost": {
+              "value": "[variables('serverBackendFullAddress')]",
+              "type": "Custom"
+            },
+            "b2cTenantID": {
+              "value": "[parameters('b2cTenant')]",
+              "type": "Custom"
+            },
+            "b2cClientID": {
+              "value": "[parameters('b2cClientId')]",
+              "type": "Custom"
+            },
+            "b2cPolicyName": {
+              "value": "[parameters('b2cPolicy')]",
+              "type": "Custom"
+            },
+            "b2cScopes": {
+              "value": "[parameters('b2cUserImpersonationScope')]",
+              "type": "Custom"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2016-03-01",
+      "name": "[parameters('computeEngineName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[parameters('hostingPlanName')]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName')))]": "empty",
+        "displayName": "ComputeEngine"
+      },
+      "properties": {
+        "name": "[parameters('computeEngineName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "config",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('computeEngineName'))]",
+            "[concat('Microsoft.Web/sites/', parameters('computeEngineName'), '/extensions/MSDeploy')]"
+          ],
+          "tags": {
+            "displayName": "ComputeEngineConfig"
+          },
+          "properties": {
+            "phpVersion": "5.6",
+            "netFrameworkVersion": "v4.6",
+            "use32BitWorkerProcess": false,
+            "webSocketsEnabled": true,
+            "alwaysOn": true,
+            "remoteDebuggingEnabled": true,
+            "remoteDebuggingVersion": "VS2015"
+          }
+        },
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('computeEngineName'))]"
+          ],
+          "tags": {
+            "displayName": "ComputeEngineMSDeploy"
+          },
+          "properties": {
+            "packageUri": "[variables('ComputeEnginePackageURI')]"
+          }
+        },
+        {
+          "name": "connectionstrings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('computeEngineName'))]",
+            "[concat('Microsoft.Web/sites/', parameters('computeEngineName'), '/extensions/MSDeploy')]"
+          ],
+          "tags": {
+            "displayName": "ComputeEngineConnectionStrings"
+          },
+          "properties": {
+            "backendHost": {
+              "value": "[variables('serverBackendFullAddress')]",
+              "type": "Custom"
+            },
+            "cloudServiceUrl": {
+              "value": "[concat(variables('computeEngineFullAddress'),'/')]",
+              "type": "Custom"
+            },
+            "faceApiSubscriptionKey": {
+              "value": "[listKeys(parameters('faceApiName'),'2016-02-01-preview').key1]",
+              "type": "Custom"
+            },
+            "faceApiBaseUrl": {
+              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "blobUri": {
+              "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net/')]",
+              "type": "Custom"
+            },
+            "blobStorageAccessKey": {
+              "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccntName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+              "type": "Custom"
+            },
+            "blobStorageAccountName": {
+              "value": "[variables('strAccntName')]",
+              "type": "Custom"
+            },
+            "serialKey": {
+              "value": "[uniqueString(resourceGroup().id)]",
+              "type": "Custom"
+            }
+
+
+
+
+
+            //"BlobConnection": {
+            //  "value": "[variables('BlobconnectionString')]",
+            //  "type": "Custom"
+            //},
+            //"ConnectionString": {
+            //  "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]",
+            //  "type": "Custom"
+            //},
+            //"ConsumerGroup": {
+            //  "value": "[concat(variables('d2cConsumerGroupName'), '1')]",
+            //  "type": "Custom"
+            //},
+            //"EventHubConnectionString": {
+            //  "value": "[variables('eventhubConnectionString')]",
+            //  "type": "Custom"
+            //},
+            //"EventHubPath": {
+            //  "value": "[parameters('eventHubName')]",
+            //  "type": "Custom"
+            //},
+            //"InstrumentationKey": {
+            //  "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightResourceName')), '2014-04-01').InstrumentationKey]",
+            //  "type": "Custom"
+            //}
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2016-03-01",
+      "name": "[parameters('serverBackendName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[variables('DocDBAccountName')]",
+        "[parameters('hostingPlanName')]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName')))]": "empty",
+        "displayName": "ServerBackend"
+      },
+      "properties": {
+        "name": "[parameters('serverBackendName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "config",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('serverBackendName'))]",
+            "[concat('Microsoft.Web/sites/', parameters('serverBackendName'), '/extensions/MSDeploy')]"
+          ],
+          "tags": {
+            "displayName": "ServerBackendConfig"
+          },
+          "properties": {
+            "phpVersion": "5.6",
+            "netFrameworkVersion": "v4.6",
+            "use32BitWorkerProcess": false,
+            "webSocketsEnabled": true,
+            "alwaysOn": true,
+            "remoteDebuggingEnabled": true,
+            "remoteDebuggingVersion": "VS2015",
+            "cors": {
+              "allowedOrigins": [
+                "[concat('https://', toLower(parameters('webSiteName')), '.azurewebsites.net')]"
+              ]
+            }
+          }
+        },
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('serverBackendName'))]",
+            "[concat('Microsoft.Devices/iothubs/', variables('iotHubName'))]"
+          ],
+          "tags": {
+            "displayName": "ServerBackendMSDeploy"
+          },
+          "properties": {
+            "packageUri": "[variables('ServerBackendPackageURI')]"
+          }
+        },
+        {
+          "name": "connectionstrings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('serverBackendName'))]",
+            "[concat('Microsoft.Web/sites/', parameters('serverBackendName'), '/extensions/MSDeploy')]"
+          ],
+          "tags": {
+            "displayName": "ServerBackendConnectionStrings"
+          },
+          "properties": {
+
+            "backendHost": {
+              "value": "[variables('serverBackendFullAddress')]",
+              "type": "Custom"
+            },
+            "mongooseUrl": {
+              "value": "[concat('mongodb://', variables('DocDBAccountName'), ':', listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocDBAccountName')), '2015-04-08').primaryMasterKey, '@', variables('DocDBAccountName'), '.documents.azure.com:10250/?ssl=true&replicaSet=globaldb')]",
+              "type": "Custom"
+            },
+            "b2cClientID": {
+              "value": "[parameters('b2cClientId')]",
+              "type": "Custom"
+            },
+            "b2cPolicyName": {
+              "value": "[parameters('b2cPolicy')]",
+              "type": "Custom"
+            },
+            "b2cTenantID": {
+              "value": "[parameters('b2cTenant')]",
+              "type": "Custom"
+            },
+            "iothubConnectionString": {
+              "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]",
+              "type": "Custom"
+            },
+            "faceApiSubscriptionKey": {
+              "value": "[listKeys(parameters('faceApiName'),'2016-02-01-preview').key1]",
+              "type": "Custom"
+            },
+            "faceApiBaseUrl": {
+              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint,'/face/v1.0/')]",
+              "type": "Custom"
+            },
+            "videoIndexSubscriptionKey": {
+              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint,'/facelists/0/persistedFaces')]",
+              "type": "Custom"
+            },
+            "blobUri": {
+              "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net/')]",
+              "type": "Custom"
+            },
+            "blobStorageAccessKey": {
+              "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccntName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+              "type": "Custom"
+            },
+            "blobStorageAccountName": {
+              "value": "[variables('strAccntName')]",
+              "type": "Custom"
+            }
+
+
+            //"BlobConnection": {
+            //  "value": "[variables('BlobconnectionString')]",
+            //  "type": "Custom"
+            //},
+            //"DBConnection": {
+            //  "value": "[variables('databaseConnString')]",
+            //  "type": "Custom"
+            //},
+            //"AzureWebJobsDashboard": {
+            //  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('webjobStorageName'),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('webjobStorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+            //  "type": "Custom"
+            //},
+            //"AzureWebJobsStorage": {
+            //  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('webjobStorageName'),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('webjobStorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+            //  "type": "Custom"
+            //}
+          }
+        }
+      ]
+    }
+
+    //Web App Resources End
+
+  ],
+  "outputs": {
+    //Web App Output Start
+
+    "WebSiteUri": {
+      "type": "string",
+      "value": "[reference(concat('Microsoft.Web/sites/', parameters('webSiteName'))).hostnames[0]]"
+    },
+    "ServerBackendUri": {
+      "type": "string",
+      "value": "[reference(concat('Microsoft.Web/sites/', parameters('serverBackendName'))).hostnames[0]]"
+    },
+    "ComputeEngineUri": {
+      "type": "string",
+      "value": "[reference(concat('Microsoft.Web/sites/', parameters('computeEngineName'))).hostnames[0]]"
+    },
+
+    //Web App Output End
+
+    //IoT hub Output Start
+
+    "IoTHubConnectionString": {
+      "type": "string",
+      "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]"
+    },
+
+    //IoT hub Output End
+
+    //Video Indexer Output Start
+
+    "VideoIndexerKey": {
+      "type": "string",
+      "value": "[parameters('videoIndexerKey')]"
+    }
+
+    //Video Indexer Output End
+  }
+}
