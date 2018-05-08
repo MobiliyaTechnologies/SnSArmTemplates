@@ -163,42 +163,42 @@
 
     //Power BI Parameters Start
 
-    "pbiUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "Enter PowerBI account username"
-      }
-    },
-    "pbiPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Enter PowerBI account password"
-      }
-    },
-    "pbiClientId": {
-      "type": "string",
-      "metadata": {
-        "description": "Enter Client Id of App registered with PowerBI"
-      }
-    },
-    "pbiClientSecret": {
-      "type": "string",
-      "metadata": {
-        "description": "Enter Client Secret of App registered with PowerBI"
-      }
-    },
-    "pbiEmbedUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "Enter PowerBI report URL to be embeded"
-      }
-    },
-    "pbiReportId": {
-      "type": "string",
-      "metadata": {
-        "description": "Enter report Id of published Power BI report"
-      }
-    },
+    //"pbiUsername": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter PowerBI account username"
+    //  }
+    //},
+    //"pbiPassword": {
+    //  "type": "securestring",
+    //  "metadata": {
+    //    "description": "Enter PowerBI account password"
+    //  }
+    //},
+    //"pbiClientId": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter Client Id of App registered with PowerBI"
+    //  }
+    //},
+    //"pbiClientSecret": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter Client Secret of App registered with PowerBI"
+    //  }
+    //},
+    //"pbiEmbedUrl": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter PowerBI report URL to be embeded"
+    //  }
+    //},
+    //"pbiReportId": {
+    //  "type": "string",
+    //  "metadata": {
+    //    "description": "Enter report Id of published Power BI report"
+    //  }
+    //},
 
     //Power BI Parameters End
 
@@ -214,6 +214,14 @@
     //Video Indexer Parameters End
   },
   "variables": {
+    //Storage Account Variables Start
+
+    "strAccntName": "[concat('snsstrg',uniqueString(resourceGroup().id))]",
+    "strAccntType": "Standard_LRS",
+
+    //Storage Account Variables End
+
+
     //IoT Hub Variables Start
 
     "iotHubName": "[concat(parameters('iotHubNamePrefix'),uniqueString(resourceGroup().id))]",
@@ -231,9 +239,9 @@
     //Storage Variables Start
     "DeployStorageAccountName": "snsarm",
     "DeployStorageAccountKey": "",
-    "WebAppDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/SnsWebApp.zip",
-    "ComputeEngineDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/CloudComputeEngine.zip",
-    "ServerBackendDeployPackageURI": "https://snsarm.blob.core.windows.net/deploy/SnsBackend.zip",
+    "WebAppDeployPackageURI": "<Placeholder for Web App deployment package blob URL>",
+    "ComputeEngineDeployPackageURI": "<Placeholder for Compute Engine deployment package blob URL>",
+    "ServerBackendDeployPackageURI": "<Placeholder for REST API App deployment package blob URL>",
     "SasToken": "?",
 
     //Storage Variables End
@@ -266,6 +274,25 @@
     //Web App Variables End
   },
   "resources": [
+
+    //Storage Account Resources Start
+
+    {
+      "name": "[variables('strAccntName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[variables('strAccntType')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "webjobStorage"
+      },
+      "kind": "Storage"
+    },
+
+    //Storage Account Resources End
 
     //IoT Hub Resources Start
 
@@ -435,14 +462,6 @@
               "value": "[variables('serverBackendFullAddress')]",
               "type": "Custom"
             },
-            "pbiEmbedUrl": {
-              "value": "[parameters('pbiEmbedUrl')]",
-              "type": "Custom"
-            },
-            "did": {
-              "value": "[parameters('pbiReportId')]",
-              "type": "Custom"
-            },
             "b2cTenantID": {
               "value": "[parameters('b2cTenant')]",
               "type": "Custom"
@@ -533,7 +552,7 @@
               "type": "Custom"
             },
             "cloudServiceUrl": {
-              "value": "[concat(variables('computeEngineFullAddress'),'/faces/recognize')]",
+              "value": "[concat(variables('computeEngineFullAddress'),'/')]",
               "type": "Custom"
             },
             "faceApiSubscriptionKey": {
@@ -541,7 +560,23 @@
               "type": "Custom"
             },
             "faceApiBaseUrl": {
-              "value": "[reference(parameters('faceApiName'),'2016-02-01-preview').endpoint]",
+              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "blobUri": {
+              "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net/')]",
+              "type": "Custom"
+            },
+            "blobStorageAccessKey": {
+              "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccntName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+              "type": "Custom"
+            },
+            "blobStorageAccountName": {
+              "value": "[variables('strAccntName')]",
+              "type": "Custom"
+            },
+            "serialKey": {
+              "value": "[uniqueString(resourceGroup().id)]",
               "type": "Custom"
             }
 
@@ -670,22 +705,6 @@
               "value": "[parameters('b2cTenant')]",
               "type": "Custom"
             },
-            "pbiUsername": {
-              "value": "[parameters('pbiUsername')]",
-              "type": "Custom"
-            },
-            "pbiPassword": {
-              "value": "[parameters('pbiPassword')]",
-              "type": "Custom"
-            },
-            "pbiClientId": {
-              "value": "[parameters('pbiClientId')]",
-              "type": "Custom"
-            },
-            "pbiClientSecret": {
-              "value": "[parameters('pbiClientSecret')]",
-              "type": "Custom"
-            },
             "iothubConnectionString": {
               "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]",
               "type": "Custom"
@@ -695,11 +714,23 @@
               "type": "Custom"
             },
             "faceApiBaseUrl": {
-              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint,'/facelists/0/persistedFaces')]",
+              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint,'/face/v1.0/')]",
               "type": "Custom"
             },
             "videoIndexSubscriptionKey": {
               "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint,'/facelists/0/persistedFaces')]",
+              "type": "Custom"
+            },
+            "blobUri": {
+              "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net/')]",
+              "type": "Custom"
+            },
+            "blobStorageAccessKey": {
+              "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccntName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+              "type": "Custom"
+            },
+            "blobStorageAccountName": {
+              "value": "[variables('strAccntName')]",
               "type": "Custom"
             }
 
