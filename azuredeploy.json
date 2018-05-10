@@ -690,7 +690,7 @@
               "type": "Custom"
             },
             "mongooseUrl": {
-              "value": "[concat('mongodb://', variables('DocDBAccountName'), ':', listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocDBAccountName')), '2015-04-08').primaryMasterKey, '@', variables('DocDBAccountName'), '.documents.azure.com:10250/?ssl=true&replicaSet=globaldb')]",
+              "value": "[concat('mongodb://', variables('DocDBAccountName'), ':', listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('DocDBAccountName')), '2015-04-08').primaryMasterKey, '@', variables('DocDBAccountName'), '.documents.azure.com:10255/?ssl=true&replicaSet=globaldb')]",
               "type": "Custom"
             },
             "b2cClientID": {
