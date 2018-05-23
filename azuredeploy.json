@@ -721,6 +721,18 @@
               "value": "[parameters('videoIndexerKey')]",
               "type": "Custom"
             },
+            "videoBlobUri": {
+              "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net')]",
+              "type": "Custom"
+            },
+            "videoBlobStorageAccessKey": {
+              "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccntName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+              "type": "Custom"
+            },
+            "videoBlobStorageAccountName": {
+              "value": "[variables('strAccntName')]",
+              "type": "Custom"
+            },
             "blobUri": {
               "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net/')]",
               "type": "Custom"
