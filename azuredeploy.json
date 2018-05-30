@@ -161,47 +161,6 @@
 
     //B2C Parameters End
 
-    //Power BI Parameters Start
-
-    //"pbiUsername": {
-    //  "type": "string",
-    //  "metadata": {
-    //    "description": "Enter PowerBI account username"
-    //  }
-    //},
-    //"pbiPassword": {
-    //  "type": "securestring",
-    //  "metadata": {
-    //    "description": "Enter PowerBI account password"
-    //  }
-    //},
-    //"pbiClientId": {
-    //  "type": "string",
-    //  "metadata": {
-    //    "description": "Enter Client Id of App registered with PowerBI"
-    //  }
-    //},
-    //"pbiClientSecret": {
-    //  "type": "string",
-    //  "metadata": {
-    //    "description": "Enter Client Secret of App registered with PowerBI"
-    //  }
-    //},
-    //"pbiEmbedUrl": {
-    //  "type": "string",
-    //  "metadata": {
-    //    "description": "Enter PowerBI report URL to be embeded"
-    //  }
-    //},
-    //"pbiReportId": {
-    //  "type": "string",
-    //  "metadata": {
-    //    "description": "Enter report Id of published Power BI report"
-    //  }
-    //},
-
-    //Power BI Parameters End
-
     //Video Indexer Parameters Start
 
     "videoIndexerKey": {
@@ -237,7 +196,7 @@
     //Face API Variables End
 
     //Storage Variables Start
-    "DeployStorageAccountName": "snsarm",
+    "DeployStorageAccountName": "<Placeholder for deployment storage account name>",
     "DeployStorageAccountKey": "",
     "WebAppDeployPackageURI": "<Placeholder for Web App deployment package blob URL>",
     "ComputeEngineDeployPackageURI": "<Placeholder for Compute Engine deployment package blob URL>",
@@ -252,9 +211,6 @@
 
     "DocDBAccountName": "[concat(toLower(parameters('docDBNamePrefix')),uniqueString('resourceGroup().id'))]",
     "offerType": "Standard",
-    //"DocDBName": "AssetTrackingDB",
-    //"DocDBGroupGpsCollection": "GroupGpsData",
-    //"DocDBSensorCollection": "SensorData",
     "DocDBOfferThroughput": "400",
 
     //Document DB Variables End
@@ -579,35 +535,6 @@
               "value": "[uniqueString(resourceGroup().id)]",
               "type": "Custom"
             }
-
-
-
-
-
-            //"BlobConnection": {
-            //  "value": "[variables('BlobconnectionString')]",
-            //  "type": "Custom"
-            //},
-            //"ConnectionString": {
-            //  "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]",
-            //  "type": "Custom"
-            //},
-            //"ConsumerGroup": {
-            //  "value": "[concat(variables('d2cConsumerGroupName'), '1')]",
-            //  "type": "Custom"
-            //},
-            //"EventHubConnectionString": {
-            //  "value": "[variables('eventhubConnectionString')]",
-            //  "type": "Custom"
-            //},
-            //"EventHubPath": {
-            //  "value": "[parameters('eventHubName')]",
-            //  "type": "Custom"
-            //},
-            //"InstrumentationKey": {
-            //  "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightResourceName')), '2014-04-01').InstrumentationKey]",
-            //  "type": "Custom"
-            //}
           }
         }
       ]
@@ -718,7 +645,19 @@
               "type": "Custom"
             },
             "videoIndexSubscriptionKey": {
-              "value": "[concat(reference(parameters('faceApiName'),'2016-02-01-preview').endpoint,'/facelists/0/persistedFaces')]",
+              "value": "[parameters('videoIndexerKey')]",
+              "type": "Custom"
+            },
+            "videoBlobUri": {
+              "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net')]",
+              "type": "Custom"
+            },
+            "videoBlobStorageAccessKey": {
+              "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('strAccntName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+              "type": "Custom"
+            },
+            "videoBlobStorageAccountName": {
+              "value": "[variables('strAccntName')]",
               "type": "Custom"
             },
             "blobUri": {
@@ -733,24 +672,6 @@
               "value": "[variables('strAccntName')]",
               "type": "Custom"
             }
-
-
-            //"BlobConnection": {
-            //  "value": "[variables('BlobconnectionString')]",
-            //  "type": "Custom"
-            //},
-            //"DBConnection": {
-            //  "value": "[variables('databaseConnString')]",
-            //  "type": "Custom"
-            //},
-            //"AzureWebJobsDashboard": {
-            //  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('webjobStorageName'),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('webjobStorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-            //  "type": "Custom"
-            //},
-            //"AzureWebJobsStorage": {
-            //  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('webjobStorageName'),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('webjobStorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
-            //  "type": "Custom"
-            //}
           }
         }
       ]
