@@ -12,7 +12,7 @@
     },
     "faceApiLocation": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "eastus",
       "allowedValues": [
         "eastus",
         "eastus2",
@@ -24,25 +24,25 @@
         "westeurope"
       ]
     },
-    "b2cClientId": {
+    "B2C Application Id": {
       "type": "string",
       "metadata": {
         "description": "Enter App Client ID registrered under B2C tenant"
       }
     },
-    "b2cPolicy": {
+    "B2C Policy": {
       "type": "string",
       "metadata": {
         "description": "Enter B2C SignUp-SignIn policy"
       }
     },
-    "b2cTenant": {
+    "B2C Tenant": {
       "type": "string",
       "metadata": {
         "description": "Enter B2C tenant name ex. something.onmicrosoft.com"
       }
     },
-    "b2cScope": {
+    "B2C Scope": {
       "type": "string",
       "metadata": {
         "description": "Enter User impersonation scope of B2C tenant"
@@ -312,19 +312,19 @@
               "type": "Custom"
             },
             "b2cTenantID": {
-              "value": "[parameters('b2cTenant')]",
+              "value": "[parameters('B2C Tenant')]",
               "type": "Custom"
             },
             "b2cClientID": {
-              "value": "[parameters('b2cClientId')]",
+              "value": "[parameters('B2C Application Id')]",
               "type": "Custom"
             },
             "b2cPolicyName": {
-              "value": "[parameters('b2cPolicy')]",
+              "value": "[parameters('B2C Policy')]",
               "type": "Custom"
             },
             "b2cScopes": {
-              "value": "[parameters('b2cScope')]",
+              "value": "[parameters('B2C Scope')]",
               "type": "Custom"
             }
           }
@@ -514,15 +514,15 @@
               "type": "Custom"
             },
             "b2cClientID": {
-              "value": "[parameters('b2cClientId')]",
+              "value": "[parameters('B2C Application Id')]",
               "type": "Custom"
             },
             "b2cPolicyName": {
-              "value": "[parameters('b2cPolicy')]",
+              "value": "[parameters('B2C Policy')]",
               "type": "Custom"
             },
             "b2cTenantID": {
-              "value": "[parameters('b2cTenant')]",
+              "value": "[parameters('B2C Tenant')]",
               "type": "Custom"
             },
             "iothubConnectionString": {
