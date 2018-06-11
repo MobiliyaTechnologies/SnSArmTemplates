@@ -425,7 +425,7 @@
               "type": "Custom"
             },
             "serialKey": {
-              "value": "[uniqueString(resourceGroup().id)]",
+              "value": "[parameters('deploymentPrefix')]",
               "type": "Custom"
             }
           }
