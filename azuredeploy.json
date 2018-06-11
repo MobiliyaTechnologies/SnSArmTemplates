@@ -471,7 +471,7 @@
             "remoteDebuggingVersion": "VS2015",
             "cors": {
               "allowedOrigins": [
-                "[concat('https://', toLower(variables('webSiteName')), '.azurewebsites.net')]"
+                //"[concat('https://', toLower(variables('webSiteName')), '.azurewebsites.net')]"
               ]
             }
           }
