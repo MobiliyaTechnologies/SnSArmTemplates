@@ -534,7 +534,7 @@
               "type": "Custom"
             },
             "faceApiBaseUrl": {
-              "value": "[concat(reference(variables('faceApiName'),'2016-02-01-preview').endpoint,'/face/v1.0/')]",
+              "value": "[concat(reference(variables('faceApiName'),'2016-02-01-preview').endpoint, '/')]",
               "type": "Custom"
             },
             "videoIndexSubscriptionKey": {
