@@ -6,8 +6,9 @@
     "deploymentPrefix": {
       "type": "string",
       "minLength": 4,
+      "maxLength": 15,
       "metadata": {
-        "description": "A unique string for the deployment which would be used to provision the resources"
+        "description": "A unique string for the deployment with maximum 15 characters which would be used to provision the resources"
       }
     },
     "faceApiLocation": {
@@ -468,12 +469,7 @@
             "webSocketsEnabled": true,
             "alwaysOn": true,
             "remoteDebuggingEnabled": true,
-            "remoteDebuggingVersion": "VS2015",
-            "cors": {
-              "allowedOrigins": [
-                //"[concat('https://', toLower(variables('webSiteName')), '.azurewebsites.net')]"
-              ]
-            }
+            "remoteDebuggingVersion": "VS2015"
           }
         },
         {
