@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
+  "contentVersion": "1.0.0.1",
   "parameters": {
 
     "deploymentPrefix": {
@@ -11,7 +11,7 @@
         "description": "A unique string for the deployment with maximum 15 characters which would be used to provision the resources"
       }
     },
-    "faceApiLocation": {
+    "cognitiveServicesLocation": {
       "type": "string",
       "defaultValue": "eastus",
       "allowedValues": [
@@ -81,6 +81,13 @@
     "faceApiPricingTier": "S0",
 
     //Face API Variables End
+
+    //Vision API Variables Start
+
+    "visionApiName": "[concat(parameters('deploymentPrefix'),'visionapi')]",
+    "visionApiPricingTier": "S1",
+
+    //Vision API Variables End
 
     //Storage Variables Start
 
@@ -182,7 +189,7 @@
     {
       "apiVersion": "2016-02-01-preview",
       "name": "[variables('faceApiName')]",
-      "location": "[parameters('faceApiLocation')]",
+      "location": "[parameters('cognitiveServicesLocation')]",
       "type": "Microsoft.CognitiveServices/accounts",
       "kind": "Face",
       "sku": {
@@ -192,6 +199,22 @@
     },
 
     //Face API Resources End
+
+    //Vision API Resources Start
+
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "sku": {
+        "name": "[variables('visionApiPricingTier')]"
+      },
+      "kind": "ComputerVision",
+      "name": "[variables('visionApiName')]",
+      "apiVersion": "2016-02-01-preview",
+      "location": "[parameters('cognitiveServicesLocation')]",
+      "properties": {}
+    },
+
+    //Vision API Resources End
 
     //Database Resources Start
 
@@ -411,6 +434,14 @@
             },
             "faceApiBaseUrl": {
               "value": "[concat(reference(variables('faceApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "textEndpoint": {
+              "value": "[concat(reference(variables('visionApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "textSubscriptionKey ": {
+              "value": "[listKeys(variables('visionApiName'),'2016-02-01-preview').key1]",
               "type": "Custom"
             },
             "blobUri": {
