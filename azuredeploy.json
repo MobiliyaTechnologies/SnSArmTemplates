@@ -77,15 +77,19 @@
 
     //Face API Variables Start
 
-    "faceApiName": "[concat(parameters('deploymentPrefix'),'faceapi')]",
-    "faceApiPricingTier": "S0",
+    "freeFaceApiName": "[concat(parameters('deploymentPrefix'),'-basic-faceapi')]",
+    "freeFaceApiPricingTier": "S0",
+    "standardFaceApiName": "[concat(parameters('deploymentPrefix'),'-standard-faceapi')]",
+    "standardFaceApiPricingTier": "S0",
 
     //Face API Variables End
 
     //Vision API Variables Start
 
-    "visionApiName": "[concat(parameters('deploymentPrefix'),'visionapi')]",
-    "visionApiPricingTier": "S1",
+    "freeVisionApiName": "[concat(parameters('deploymentPrefix'),'-basic-visionapi')]",
+    "freeVisionApiPricingTier": "S1",
+    "standardVisionApiName": "[concat(parameters('deploymentPrefix'),'-standard-visionapi')]",
+    "standardVisionApiPricingTier": "S1",
 
     //Vision API Variables End
 
@@ -188,12 +192,23 @@
 
     {
       "apiVersion": "2016-02-01-preview",
-      "name": "[variables('faceApiName')]",
+      "name": "[variables('freeFaceApiName')]",
       "location": "[parameters('cognitiveServicesLocation')]",
       "type": "Microsoft.CognitiveServices/accounts",
       "kind": "Face",
       "sku": {
-        "name": "[variables('faceApiPricingTier')]"
+        "name": "[variables('freeFaceApiPricingTier')]"
+      },
+      "properties": {}
+    },
+    {
+      "apiVersion": "2016-02-01-preview",
+      "name": "[variables('standardFaceApiName')]",
+      "location": "[parameters('cognitiveServicesLocation')]",
+      "type": "Microsoft.CognitiveServices/accounts",
+      "kind": "Face",
+      "sku": {
+        "name": "[variables('standardFaceApiPricingTier')]"
       },
       "properties": {}
     },
@@ -205,10 +220,21 @@
     {
       "type": "Microsoft.CognitiveServices/accounts",
       "sku": {
-        "name": "[variables('visionApiPricingTier')]"
+        "name": "[variables('freeVisionApiPricingTier')]"
       },
       "kind": "ComputerVision",
-      "name": "[variables('visionApiName')]",
+      "name": "[variables('freeVisionApiName')]",
+      "apiVersion": "2016-02-01-preview",
+      "location": "[parameters('cognitiveServicesLocation')]",
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "sku": {
+        "name": "[variables('standardVisionApiPricingTier')]"
+      },
+      "kind": "ComputerVision",
+      "name": "[variables('standardVisionApiName')]",
       "apiVersion": "2016-02-01-preview",
       "location": "[parameters('cognitiveServicesLocation')]",
       "properties": {}
@@ -428,22 +454,6 @@
               "value": "[concat(variables('computeEngineFullAddress'),'/')]",
               "type": "Custom"
             },
-            "faceApiSubscriptionKey": {
-              "value": "[listKeys(variables('faceApiName'),'2016-02-01-preview').key1]",
-              "type": "Custom"
-            },
-            "faceApiBaseUrl": {
-              "value": "[concat(reference(variables('faceApiName'),'2016-02-01-preview').endpoint, '/')]",
-              "type": "Custom"
-            },
-            "textEndpoint": {
-              "value": "[concat(reference(variables('visionApiName'),'2016-02-01-preview').endpoint, '/')]",
-              "type": "Custom"
-            },
-            "textSubscriptionKey ": {
-              "value": "[listKeys(variables('visionApiName'),'2016-02-01-preview').key1]",
-              "type": "Custom"
-            },
             "blobUri": {
               "value": "[concat('https://', variables('strAccntName'), '.blob.core.windows.net/')]",
               "type": "Custom"
@@ -454,6 +464,42 @@
             },
             "blobStorageAccountName": {
               "value": "[variables('strAccntName')]",
+              "type": "Custom"
+            },
+            "faceApiBaseUrlFree": {
+              "value": "[concat(reference(variables('freeFaceApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "faceApiSubscriptionKeyFree": {
+              "value": "[listKeys(variables('freeFaceApiName'),'2016-02-01-preview').key1]",
+              "type": "Custom"
+            },
+            "faceApiBaseUrlStandard": {
+              "value": "[concat(reference(variables('standardFaceApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "faceApiSubscriptionKeyStandard": {
+              "value": "[listKeys(variables('standardFaceApiName'),'2016-02-01-preview').key1]",
+              "type": "Custom"
+            },
+            "textApiBaseUrlFree": {
+              "value": "[concat(reference(variables('freeVisionApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "textApiSubscriptionKeyFree": {
+              "value": "[listKeys(variables('freeVisionApiName'),'2016-02-01-preview').key1]",
+              "type": "Custom"
+            },
+            "textApiBaseUrlStandard": {
+              "value": "[concat(reference(variables('standardVisionApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "textApiSubscriptionKeyStandard": {
+              "value": "[listKeys(variables('standardVisionApiName'),'2016-02-01-preview').key1]",
+              "type": "Custom"
+            },
+            "iotHubConnectionString ": {
+              "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]",
               "type": "Custom"
             },
             "serialKey": {
@@ -556,12 +602,20 @@
               "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]",
               "type": "Custom"
             },
-            "faceApiSubscriptionKey": {
-              "value": "[listKeys(variables('faceApiName'),'2016-02-01-preview').key1]",
+            "faceApiBaseUrlFree": {
+              "value": "[concat(reference(variables('freeFaceApiName'),'2016-02-01-preview').endpoint, '/')]",
               "type": "Custom"
             },
-            "faceApiBaseUrl": {
-              "value": "[concat(reference(variables('faceApiName'),'2016-02-01-preview').endpoint, '/')]",
+            "faceApiSubscriptionKeyFree": {
+              "value": "[listKeys(variables('freeFaceApiName'),'2016-02-01-preview').key1]",
+              "type": "Custom"
+            },
+            "faceApiBaseUrlStandard": {
+              "value": "[concat(reference(variables('standardFaceApiName'),'2016-02-01-preview').endpoint, '/')]",
+              "type": "Custom"
+            },
+            "faceApiSubscriptionKeyStandard": {
+              "value": "[listKeys(variables('standardFaceApiName'),'2016-02-01-preview').key1]",
               "type": "Custom"
             },
             "videoIndexSubscriptionKey": {
@@ -590,6 +644,14 @@
             },
             "blobStorageAccountName": {
               "value": "[variables('strAccntName')]",
+              "type": "Custom"
+            },
+            "eventHubConnectionString": {
+              "value": "[concat('Endpoint=',reference(resourceId('Microsoft.Devices/IoTHubs',variables('iotHubName'))).eventHubEndpoints.events.endpoint,';SharedAccessKeyName=iothubowner;SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs',variables('iotHubName')),'2016-02-03').value[0].primaryKey)]",
+              "type": "Custom"
+            },
+            "eventHubName": {
+              "value": "[take(variables('iotHubName'),25)]",
               "type": "Custom"
             }
           }
