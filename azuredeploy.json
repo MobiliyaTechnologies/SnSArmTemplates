@@ -75,6 +75,16 @@
 
     //IoT Hub Variables End
 
+    //Event Hub Variables Start
+
+    "eventhubNamespace": "[concat(parameters('deploymentPrefix'),'eventhubnmsp')]",
+    "eventHubName": "[concat(parameters('deploymentPrefix'),'eventhub')]",
+    "eventHubPrimaryKey": "[concat(uniqueString(variables('eventhubNamespace'), resourceGroup().Id, 'primaryKey'),'3VZcT2e5NfVeSFvTuiYUiWtXhxnJ2s=')]",
+    "eventHubSecondaryKey": "[concat(uniqueString(variables('eventhubNamespace'), resourceGroup().Id, 'secondaryKey'),'F9NRSV78nYomDlFjsz21X9aVKPL4Eo=')]",
+    "eventHubConnectionString": "[concat('Endpoint=sb://', variables('eventhubNamespace'), '.servicebus.windows.net/;SharedAccessKeyName=EventHubOwner;SharedAccessKey=', variables('eventHubPrimaryKey'), ';EntityPath=', variables('eventhubName'))]",
+
+    //Event Hub Variables End
+
     //Face API Variables Start
 
     "freeFaceApiName": "[concat(parameters('deploymentPrefix'),'-basic-faceapi')]",
@@ -161,6 +171,9 @@
       "apiVersion": "2016-02-03",
       "location": "[resourceGroup().location]",
       "name": "[variables('iotHubName')]",
+      "dependsOn": [
+        "[variables('eventHubName')]"
+      ],
       "properties": {
         "eventHubEndpoints": {
           "events": {
@@ -177,6 +190,41 @@
             "lockDurationAsIso8601": "PT60S"
           }
         },
+        "routing": {
+          "endpoints": {
+            "serviceBusQueues": [],
+            "serviceBusTopics": [],
+            "eventHubs": [
+              {
+                "connectionString": "[variables('eventHubConnectionString')]",
+                "name": "EventHubEndpoint",
+                "subscriptionId": "[subscription().subscriptionId]",
+                "resourceGroup": "[resourceGroup().name]"
+              }
+            ],
+            "storageContainers": []
+          },
+          "routes": [
+            {
+              "name": "EventhubRoute",
+              "source": "DeviceMessages",
+              "condition": "type=\"cloudComputeImages\"",
+              "endpointNames": [
+                "EventHubEndpoint"
+              ],
+              "isEnabled": true
+            }
+          ],
+          "fallbackRoute": {
+            "name": "$fallback",
+            "source": "DeviceMessages",
+            "condition": "true",
+            "endpointNames": [
+              "events"
+            ],
+            "isEnabled": true
+          }
+        },
         "location": "[resourceGroup().location]"
       },
       "sku": {
@@ -187,6 +235,57 @@
     },
 
     //IoT Hub Resources End
+
+    //Event Hub Resources Start
+
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[variables('eventhubNamespace')]",
+      "type": "Microsoft.EventHub/Namespaces",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "isAutoInflateEnabled": "true",
+        "maximumThroughputUnits": "2"
+      },
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "name": "[variables('eventhubName')]",
+          "type": "EventHubs",
+          "dependsOn": [
+            "[concat('Microsoft.EventHub/namespaces/', variables('eventhubNamespace'))]"
+          ],
+          "properties": {
+            "messageRetentionInDays": "3",
+            "partitionCount": "4"
+          },
+          "resources": [
+            {
+              "apiVersion": "2014-09-01",
+              "name": "EventHubOwner",
+              "type": "AuthorizationRules",
+              "dependsOn": [
+                "[variables('eventhubName')]"
+              ],
+              "properties": {
+                "keyName": "EventHubOwner",
+                "claimType": "SharedAccessKey",
+                "claimValue": "None",
+                "primaryKey": "[variables('eventHubPrimaryKey')]",
+                "secondaryKey": "[variables('eventHubSecondaryKey')]",
+                "rights": [ "Manage", "Send", "Listen" ],
+                "revision": -1
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    //Event Hub Resources End
 
     //Face API Resources Start
 
@@ -387,7 +486,8 @@
       "type": "Microsoft.Web/sites",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[variables('hostingPlanName')]"
+        "[variables('hostingPlanName')]",
+        "[concat('Microsoft.Web/sites/', variables('serverBackendName'), '/config/connectionstrings')]"
       ],
       "tags": {
         "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName')))]": "empty",
@@ -505,6 +605,14 @@
             "serialKey": {
               "value": "[parameters('deploymentPrefix')]",
               "type": "Custom"
+            },
+            "eventHubName": {
+              "value": "[variables('eventHubName')]",
+              "type": "Custom"
+            },
+            "evenHubConnectionString": {
+              "value": "[variables('eventHubConnectionString')]",
+              "type": "Custom"
             }
           }
         }
@@ -602,19 +710,19 @@
               "value": "[concat('HostName=',variables('iotHubName'),'.azure-devices.net;SharedAccessKeyName=',variables('iotHubKeyName'),';SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs/Iothubkeys', variables('iotHubName'), variables('iotHubKeyName')), '2016-02-03').primaryKey)]",
               "type": "Custom"
             },
-            "faceApiBaseUrlFree": {
+            "freeFaceApiBaseUrl": {
               "value": "[concat(reference(variables('freeFaceApiName'),'2016-02-01-preview').endpoint, '/')]",
               "type": "Custom"
             },
-            "faceApiSubscriptionKeyFree": {
+            "freeFaceApiSubscriptionKey": {
               "value": "[listKeys(variables('freeFaceApiName'),'2016-02-01-preview').key1]",
               "type": "Custom"
             },
-            "faceApiBaseUrlStandard": {
+            "standardFaceApiBaseUrl": {
               "value": "[concat(reference(variables('standardFaceApiName'),'2016-02-01-preview').endpoint, '/')]",
               "type": "Custom"
             },
-            "faceApiSubscriptionKeyStandard": {
+            "standardFaceApiSubscriptionKey": {
               "value": "[listKeys(variables('standardFaceApiName'),'2016-02-01-preview').key1]",
               "type": "Custom"
             },
@@ -646,12 +754,12 @@
               "value": "[variables('strAccntName')]",
               "type": "Custom"
             },
-            "eventHubConnectionString": {
-              "value": "[concat('Endpoint=',reference(resourceId('Microsoft.Devices/IoTHubs',variables('iotHubName'))).eventHubEndpoints.events.endpoint,';SharedAccessKeyName=iothubowner;SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs',variables('iotHubName')),'2016-02-03').value[0].primaryKey)]",
-              "type": "Custom"
-            },
             "eventHubName": {
               "value": "[take(variables('iotHubName'),25)]",
+              "type": "Custom"
+            },
+            "eventHubConnectionString": {
+              "value": "[concat('Endpoint=',reference(resourceId('Microsoft.Devices/IoTHubs',variables('iotHubName'))).eventHubEndpoints.events.endpoint,';SharedAccessKeyName=iothubowner;SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs',variables('iotHubName')),'2016-02-03').value[0].primaryKey)]",
               "type": "Custom"
             }
           }
